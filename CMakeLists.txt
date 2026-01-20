@@ -11,8 +11,12 @@ endif()
 
 add_executable(scheduler
         src/main.cpp
+        src/io.cpp
         src/models.h
         src/io.h
+        src/io.cpp
+
+
 )
 
 target_include_directories(scheduler PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
