@@ -1,4 +1,6 @@
 #include "models.h"
+#include "io.h"
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -32,16 +34,8 @@ static CliOptions parse_args(int argc, char* argv[]) {
         return opts;
     }
 
-    std::vector<std::string> args;
-    args.reserve(static_cast<size_t>(argc));
     for (int i = 1; i < argc; i++) {
-        if (argv[i] != nullptr) {
-            args.push_back(std::string(argv[i]));
-        }
-    }
-
-    for (size_t i = 0; i < args.size(); i++) {
-        const std::string& arg = args[i];
+        std::string arg = argv[i];
 
         if (arg == "--help" || arg == "-h") {
             opts.m_showHelp = true;
@@ -49,26 +43,23 @@ static CliOptions parse_args(int argc, char* argv[]) {
         } else if (arg == "--test") {
             opts.m_runTestStub = true;
         } else if (arg == "--input") {
-            if (i + 1 >= args.size()) {
+            if (i + 1 >= argc) {
                 opts.m_valid = false;
                 opts.m_errorMessage = "Error: Missing value for --input";
                 return opts;
             }
-            opts.m_inputFile = args[i + 1];
-            i++;
+            opts.m_inputFile = argv[++i];
         } else if (arg == "--mode") {
-            if (i + 1 >= args.size()) {
+            if (i + 1 >= argc) {
                 opts.m_valid = false;
                 opts.m_errorMessage = "Error: Missing value for --mode";
                 return opts;
             }
-            opts.m_mode = args[i + 1];
-            i++;
+            opts.m_mode = argv[++i];
 
             if (opts.m_mode != "greedy" && opts.m_mode != "weighted") {
                 opts.m_valid = false;
-                opts.m_errorMessage =
-                    "Error: Invalid mode. Must be 'greedy' or 'weighted'.";
+                opts.m_errorMessage = "Error: Invalid mode. Must be 'greedy' or 'weighted'.";
                 return opts;
             }
         } else {
@@ -78,7 +69,6 @@ static CliOptions parse_args(int argc, char* argv[]) {
         }
     }
 
-    //Input for Normal, none for Test FYI
     if (!opts.m_runTestStub && opts.m_inputFile.empty() && !opts.m_showHelp) {
         opts.m_valid = false;
         opts.m_errorMessage = "Error: Missing required argument --input <filepath>";
@@ -111,13 +101,19 @@ int main(int argc, char* argv[]) {
     }
 
     std::cout << "Input file: " << opts.m_inputFile << "\n";
-    std::cout << "Mode: " << opts.m_mode << "\n";
-    std::cout << "\n";
+    std::cout << "Mode: " << opts.m_mode << "\n\n";
 
-    //Placeholder REM
-    std::cout << "Loaded tasks: (not implemented yet)\n";
+    std::vector<Task> tasks = io::read_tasks_from_csv(opts.m_inputFile);
+
+    if (tasks.empty()) {
+        std::cerr << "Error: No valid tasks loaded. Exiting.\n";
+        return 1;
+    }
+
+    std::cout << "Loaded tasks: " << tasks.size() << "\n";
     std::cout << "Scheduling result: (not implemented yet)\n";
 
     return 0;
 }
+
 
