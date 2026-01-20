@@ -19,6 +19,8 @@ add_executable(scheduler
         src/greedy_scheduler.cpp
         src/weighted_scheduler.h
         src/weighted_scheduler.cpp
+        metrics.h
+        metrics.cpp
 
 
 )
