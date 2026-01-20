@@ -1,0 +1,12 @@
+# CLion/IntelliJ
+.idea/
+cmake-build-*/
+
+build/
+*.o
+*.obj
+*.out
+
+scheduler
+
+.DS_Store
