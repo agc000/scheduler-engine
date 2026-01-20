@@ -1,6 +1,7 @@
 #include "models.h"
 #include "io.h"
 #include "greedy_scheduler.h"
+#include "weighted_scheduler.h"
 
 #include <iostream>
 #include <string>
@@ -23,8 +24,6 @@ static void print_usage(const char* program_name) {
     std::cout << "  --mode     Scheduling algorithm: 'greedy' or 'weighted' (default: greedy)\n";
     std::cout << "  --test     Run test stub (no real tests yet)\n";
     std::cout << "  --help     Show this help message\n";
-    std::cout << "\nExample:\n";
-    std::cout << "  " << program_name << " --input data/small_sample.csv --mode greedy\n";
 }
 
 static CliOptions parse_args(int argc, char* argv[]) {
@@ -60,7 +59,8 @@ static CliOptions parse_args(int argc, char* argv[]) {
 
             if (opts.m_mode != "greedy" && opts.m_mode != "weighted") {
                 opts.m_valid = false;
-                opts.m_errorMessage = "Error: Invalid mode. Must be 'greedy' or 'weighted'.";
+                opts.m_errorMessage =
+                    "Error: Invalid mode. Must be 'greedy' or 'weighted'.";
                 return opts;
             }
         } else {
@@ -79,13 +79,13 @@ static CliOptions parse_args(int argc, char* argv[]) {
     return opts;
 }
 
-static void print_greedy_summary(const ScheduleResult& result) {
-    std::cout << "\n--- Greedy Result ---\n";
+static void print_result_summary(const ScheduleResult& result) {
+    std::cout << "\n--- Schedule Result ---\n";
     std::cout << "Scheduled tasks: " << result.m_scheduled.size() << "\n";
     std::cout << "Dropped tasks: " << result.m_dropped.size() << "\n";
     std::cout << "Total value: " << result.m_totalValue << "\n";
 
-    std::cout << "\nScheduled IDs:\n";
+    std::cout << "\nScheduled task IDs:\n";
     for (size_t i = 0; i < result.m_scheduled.size(); i++) {
         std::cout << "  " << result.m_scheduled[i].m_id << "\n";
     }
@@ -125,12 +125,14 @@ int main(int argc, char* argv[]) {
 
     std::cout << "Loaded tasks: " << tasks.size() << "\n";
 
+    ScheduleResult result;
+
     if (opts.m_mode == "greedy") {
-        ScheduleResult result = greedy_schedule(tasks);
-        print_greedy_summary(result);
-        return 0;
+        result = greedy_schedule(tasks);
+    } else { // Weighted
+        result = weighted_schedule(tasks);
     }
 
-    std::cout << "\nWeighted scheduling: (not implemented yet)\n";
+    print_result_summary(result);
     return 0;
 }
