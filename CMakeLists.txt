@@ -15,6 +15,8 @@ add_executable(scheduler
         src/models.h
         src/io.h
         src/io.cpp
+        src/greedy_scheduler.h
+        src/greedy_scheduler.cpp
 
 
 )
