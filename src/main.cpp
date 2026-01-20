@@ -1,5 +1,6 @@
 #include "models.h"
 #include "io.h"
+#include "greedy_scheduler.h"
 
 #include <iostream>
 #include <string>
@@ -23,7 +24,7 @@ static void print_usage(const char* program_name) {
     std::cout << "  --test     Run test stub (no real tests yet)\n";
     std::cout << "  --help     Show this help message\n";
     std::cout << "\nExample:\n";
-    std::cout << "  " << program_name << " --input data/small_sample.csv --mode weighted\n";
+    std::cout << "  " << program_name << " --input data/small_sample.csv --mode greedy\n";
 }
 
 static CliOptions parse_args(int argc, char* argv[]) {
@@ -78,6 +79,18 @@ static CliOptions parse_args(int argc, char* argv[]) {
     return opts;
 }
 
+static void print_greedy_summary(const ScheduleResult& result) {
+    std::cout << "\n--- Greedy Result ---\n";
+    std::cout << "Scheduled tasks: " << result.m_scheduled.size() << "\n";
+    std::cout << "Dropped tasks: " << result.m_dropped.size() << "\n";
+    std::cout << "Total value: " << result.m_totalValue << "\n";
+
+    std::cout << "\nScheduled IDs:\n";
+    for (size_t i = 0; i < result.m_scheduled.size(); i++) {
+        std::cout << "  " << result.m_scheduled[i].m_id << "\n";
+    }
+}
+
 int main(int argc, char* argv[]) {
     CliOptions opts = parse_args(argc, argv);
 
@@ -111,9 +124,13 @@ int main(int argc, char* argv[]) {
     }
 
     std::cout << "Loaded tasks: " << tasks.size() << "\n";
-    std::cout << "Scheduling result: (not implemented yet)\n";
 
+    if (opts.m_mode == "greedy") {
+        ScheduleResult result = greedy_schedule(tasks);
+        print_greedy_summary(result);
+        return 0;
+    }
+
+    std::cout << "\nWeighted scheduling: (not implemented yet)\n";
     return 0;
 }
-
-
