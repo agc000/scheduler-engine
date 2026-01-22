@@ -2,6 +2,7 @@
 #include "io.h"
 #include "greedy_scheduler.h"
 #include "weighted_scheduler.h"
+#include "metrics.h"
 
 #include <iostream>
 #include <string>
@@ -79,18 +80,6 @@ static CliOptions parse_args(int argc, char* argv[]) {
     return opts;
 }
 
-static void print_result_summary(const ScheduleResult& result) {
-    std::cout << "\n--- Schedule Result ---\n";
-    std::cout << "Scheduled tasks: " << result.m_scheduled.size() << "\n";
-    std::cout << "Dropped tasks: " << result.m_dropped.size() << "\n";
-    std::cout << "Total value: " << result.m_totalValue << "\n";
-
-    std::cout << "\nScheduled task IDs:\n";
-    for (size_t i = 0; i < result.m_scheduled.size(); i++) {
-        std::cout << "  " << result.m_scheduled[i].m_id << "\n";
-    }
-}
-
 int main(int argc, char* argv[]) {
     CliOptions opts = parse_args(argc, argv);
 
@@ -129,10 +118,10 @@ int main(int argc, char* argv[]) {
 
     if (opts.m_mode == "greedy") {
         result = greedy_schedule(tasks);
-    } else { // Weighted
+    } else {
         result = weighted_schedule(tasks);
     }
 
-    print_result_summary(result);
+    print_schedule_result(result, static_cast<int>(tasks.size()), opts.m_mode);
     return 0;
 }
