@@ -12,17 +12,30 @@ endif()
 add_executable(scheduler
         src/main.cpp
         src/io.cpp
+        src/greedy_scheduler.cpp
+        src/weighted_scheduler.cpp
+        src/metrics.cpp
         src/models.h
         src/io.h
-        src/io.cpp
         src/greedy_scheduler.h
-        src/greedy_scheduler.cpp
         src/weighted_scheduler.h
-        src/weighted_scheduler.cpp
-        metrics.h
-        metrics.cpp
-
-
+        src/metrics.h
+        src/metrics.cpp
 )
 
 target_include_directories(scheduler PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+add_executable(test_scheduler
+        tests/test_scheduler.cpp
+        src/io.cpp
+        src/greedy_scheduler.cpp
+        src/weighted_scheduler.cpp
+        src/metrics.cpp
+        src/models.h
+        src/io.h
+        src/greedy_scheduler.h
+        src/weighted_scheduler.h
+        src/metrics.h
+)
+
+target_include_directories(test_scheduler PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
